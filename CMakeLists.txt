@@ -1,15 +1,17 @@
-cmake_minimum_required (VERSION 2.6) 
-project (ORDERBOOK)
+cmake_minimum_required(VERSION 3.23)
+project(ORDERBOOK VERSION 0.0.1 LANGUAGES CXX)
 
-find_package(Boost 1.54 COMPONENTS REQUIRED)
+find_package(Boost COMPONENTS REQUIRED)
 include_directories( ${Boost_INCLUDE_DIR} )
-
-# Initialize CXXFLAGS.
-set(CMAKE_CXX_FLAGS "-Wall -Wno-missing-braces -std=c++11")
-set(CMAKE_BUILD_TYPE Release)
 
 set(TEST_SRCS order_book.cpp engine.cpp test.cpp)
 set(SCORE_SRCS order_book.cpp engine.cpp score.cpp)
 
-add_executable(test ${TEST_SRCS})
-add_executable(score ${SCORE_SRCS})
+add_library(quantcup_orderbook STATIC order_book.cpp engine.cpp)
+target_include_directories(quantcup_orderbook PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+add_executable(quantcup_test test.cpp)
+target_link_libraries(quantcup_test PRIVATE quantcup_orderbook)
+
+add_executable(quantcup_score score.cpp)
+target_link_libraries(quantcup_score PRIVATE quantcup_orderbook)
